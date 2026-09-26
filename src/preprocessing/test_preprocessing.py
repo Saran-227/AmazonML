@@ -218,9 +218,29 @@ class TestIdempotency(unittest.TestCase):
         self.assertEqual(norm_addr1, norm_addr2)
 
 
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+
+
+def _resolve_train_data_path(filename: str) -> str:
+    """Resolves training dataset file with fallback across project directory conventions."""
+    paths_to_try = [
+        REPO_ROOT / "student_resource" / "dataset" / "train" / filename,
+        REPO_ROOT / "data" / "train" / filename,
+        Path("data/train") / filename,
+        Path("student_resource/dataset/train") / filename,
+    ]
+    for p in paths_to_try:
+        if p.is_file():
+            return str(p)
+    return str(paths_to_try[0])
+
+
 class TestRealDataIntegration(unittest.TestCase):
     def test_stream_first_100_from_train_source1(self):
-        generator = iter_normalized_records("data/train/train_source1.tsv")
+        train_path = _resolve_train_data_path("train_source1.tsv")
+        generator = iter_normalized_records(train_path)
         records = []
         for i, rec in enumerate(generator):
             if i >= 100:
@@ -245,7 +265,8 @@ class TestRealDataIntegration(unittest.TestCase):
     def test_chunked_processing_source2(self):
         from src.preprocessing.normalize import process_file_in_chunks
 
-        chunks = process_file_in_chunks("data/train/train_source2.tsv", chunksize=100)
+        train_path = _resolve_train_data_path("train_source2.tsv")
+        chunks = process_file_in_chunks(train_path, chunksize=100)
         first_chunk = next(chunks)
         self.assertEqual(len(first_chunk), 100)
         self.assertIn("normalized_name", first_chunk.columns)
@@ -260,7 +281,8 @@ class TestRealDataIntegration(unittest.TestCase):
     def test_chunked_processing_source3(self):
         from src.preprocessing.normalize import process_file_in_chunks
 
-        chunks = process_file_in_chunks("data/train/train_source3.tsv", chunksize=100)
+        train_path = _resolve_train_data_path("train_source3.tsv")
+        chunks = process_file_in_chunks(train_path, chunksize=100)
         first_chunk = next(chunks)
         self.assertEqual(len(first_chunk), 100)
         # Check accented row in S3 row 2 (LLC Moncada Léarning Center)
@@ -269,3 +291,4 @@ class TestRealDataIntegration(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

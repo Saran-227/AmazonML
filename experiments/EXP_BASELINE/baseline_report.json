@@ -1,0 +1,75 @@
+{
+  "experiment_id": "EXP_BASELINE",
+  "git_commit": "52a3bc7cfacb117b80ef7878863110aadcdbc5fd",
+  "date": "2026-09-26",
+  "status": "FROZEN_BASELINE",
+  "blocking": {
+    "sample_size_s1": 2000,
+    "overall_recall": 96.8973,
+    "s2_recall": 96.0976,
+    "s3_recall": 97.6290,
+    "total_candidates": 384697,
+    "avg_candidates_per_s1": 192.35,
+    "median_candidates_per_s1": 178.0,
+    "p90_candidates_per_s1": 414.2,
+    "p95_candidates_per_s1": 494.0,
+    "p99_candidates_per_s1": 699.2,
+    "max_candidates_per_s1": 1145,
+    "reduction_ratio_pct": 99.99,
+    "blocking_rules": [
+      "exact_name",
+      "name_country",
+      "exact_address",
+      "name_token",
+      "compressed_name",
+      "address_anchor"
+    ]
+  },
+  "features": {
+    "feature_count": 60,
+    "feature_groups": ["Group A (Name, 14)", "Group B (Address, 16)", "Group C (Country, 4)", "Group D (Missingness, 4)", "Group E (Blocking, 7)", "Group F (Source, 2)", "Group G (Script, 7)", "Group H (Interactions, 6)"],
+    "null_count": 0,
+    "inf_count": 0
+  },
+  "model": {
+    "model_name": "HistGradientBoostingClassifier",
+    "hyperparameters": {
+      "class_weight": "balanced",
+      "max_iter": 150,
+      "max_leaf_nodes": 31,
+      "learning_rate": 0.1,
+      "min_samples_leaf": 20,
+      "random_state": 42
+    },
+    "training_samples": 331453,
+    "positive_pairs": 6707,
+    "negative_pairs": 324746
+  },
+  "validation_metrics": {
+    "evaluation_metric": "Entity-Level Macro F0.5",
+    "threshold": 0.95,
+    "macro_f05": 0.9572,
+    "macro_precision": 0.9918,
+    "macro_recall": 0.9240,
+    "micro_precision": 0.9806,
+    "micro_recall": 0.9287,
+    "micro_f05": 0.9698,
+    "cv_3fold_macro_f05": "0.9601 +/- 0.0048"
+  },
+  "performance": {
+    "blocking_runtime_seconds": 17.37,
+    "model_train_runtime_seconds": 2.18,
+    "phase5_pipeline_runtime_seconds": 129.24,
+    "peak_memory_mb": 2250
+  },
+  "submission_validator": {
+    "status": "PASS",
+    "matching_results_rows": 1732545,
+    "candidate_pairs_rows": 1732545,
+    "invalid_s1_ids": 0,
+    "invalid_candidate_ids": 0,
+    "invalid_matched_ids": 0,
+    "subset_constraint_violations": 0
+  },
+  "decision": "FROZEN_BASELINE_REFERENCE"
+}
