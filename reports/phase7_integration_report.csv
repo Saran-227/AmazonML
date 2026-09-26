@@ -1,0 +1,16 @@
+metric_category,metric_name,value
+Configuration,Blocking Model,6-rule CandidateGenerator
+Configuration,Threshold,0.95
+Validation,Macro F0.5,0.9572
+Validation,Macro Precision,0.9918
+Validation,Macro Recall,0.9240
+Validation,3-Fold Grouped CV Macro F0.5,0.9601 +/- 0.0048
+Runtime,Preprocessing Seconds,2.76
+Runtime,Blocking Seconds,1.34
+Runtime,Feature Extraction Seconds,88.88
+Runtime,Model Inference Seconds,16.77
+Runtime,Submission Writing Seconds,0.53
+Runtime,Total Runtime Seconds,110.57
+Memory,Peak RAM MB,2250 MB
+Verification,Official Validator,PASS (0 invalid IDs)
+Verification,Regression Test Suite,73/73 PASS

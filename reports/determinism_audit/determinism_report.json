@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "matching_results_sha256_run1": "7552e4368d6e1216663df027f6ff44d216ee53275a2333ae32f3a13f7f585898",
+  "matching_results_sha256_run2": "7552e4368d6e1216663df027f6ff44d216ee53275a2333ae32f3a13f7f585898",
+  "matching_results_identical": true,
+  "candidate_pairs_sha256_run1": "ae27bb10ece80608647609e1600881c52e731570fcc15db107a955faaf2b4c40",
+  "candidate_pairs_sha256_run2": "ae27bb10ece80608647609e1600881c52e731570fcc15db107a955faaf2b4c40",
+  "candidate_pairs_identical": true,
+  "full_submission_matching_sha256": "620fd51b8a7b2121ef8806bf140bd10098d71c61d921475436c00bd615208154",
+  "full_submission_candidate_sha256": "a0238be43df7d88e89d29e49b0fe537db990cd5fd509948b324244ceecee3974"
+}

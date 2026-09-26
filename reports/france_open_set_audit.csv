@@ -1,0 +1,4 @@
+country,entity_count,sample_share_pct,total_candidates,avg_candidates_per_entity,median_candidates,p95_candidates,max_candidates,empty_candidate_entities,predicted_matches,avg_matches_per_entity,zero_match_entities,singleton_entities,multimatch_entities,s2_matches,s3_matches
+France,1490,14.9,41726,28.0,30.0,30.0,30,11,1496,1.004,934,284,272,856,640
+US,3891,38.91,92621,23.8,30.0,30.0,30,108,145,0.0373,3753,131,7,80,65
+India,4619,46.19,114055,24.69,30.0,30.0,30,137,166,0.0359,4462,150,7,87,79

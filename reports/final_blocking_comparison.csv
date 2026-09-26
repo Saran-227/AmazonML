@@ -1,0 +1,4 @@
+config_name,description,total_candidates,recall_overall_pct,recall_s2_pct,recall_s3_pct,captured_matches,missed_matches,avg_cands_per_s1,median_cands_per_s1,p95_cands_per_s1,max_cands_per_s1,indexing_time_sec,generation_time_sec,total_time_sec
+baseline_6rule,Production Baseline (6 rules),179823,96.8641,96.2583,97.4259,3336,108,179.82,165.0,473.0,1080,0.59,0.42,1.01
+domain_tokens_7rule,Baseline 6 rules + domain_subtoken splitting,179823,96.8641,96.2583,97.4259,3336,108,179.82,165.0,473.0,1080,0.86,0.64,1.5
+exp_blocking_001_8rule,EXP_BLOCKING_001 (8 rules: +domain +cross_script_address),191892,98.2288,97.8274,98.601,3383,61,191.89,170.0,499.0,1083,1.57,0.8,2.37

@@ -1,0 +1,3 @@
+configuration,num_features,macro_f05,macro_precision,macro_recall,decision
+Baseline 60 Features,60,0.9518,0.9768,0.9431,ACCEPTED_PRODUCTION
+Baseline 60 Features + CrossScript-Address Interaction,61,0.953,0.9792,0.9401,CANDIDATE
