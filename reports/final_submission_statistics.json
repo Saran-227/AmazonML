@@ -1,0 +1,51 @@
+{
+  "dataset_summary": {
+    "test_source1_entities": 1732544,
+    "test_source2_entities": 4887273,
+    "test_source3_entities": 5082316,
+    "total_candidate_catalogue": 9969589
+  },
+  "candidate_statistics": {
+    "total_candidate_pairs": 248402,
+    "avg_candidates_per_s1": 0.1434,
+    "max_candidates_per_s1": 30
+  },
+  "match_statistics": {
+    "total_predicted_matches": 1807,
+    "zero_match_s1_entities": 1731693,
+    "zero_match_percentage": 99.95,
+    "singleton_match_s1_entities": 565,
+    "singleton_match_percentage": 0.0326,
+    "multi_match_s1_entities": 286,
+    "multi_match_percentage": 0.0165,
+    "s2_matches": 1023,
+    "s3_matches": 784
+  },
+  "open_set_france_breakdown": {
+    "france_s1_entities": 259452,
+    "france_s1_percentage": 14.98,
+    "france_s2_entities": 703378,
+    "france_s3_entities": 731615,
+    "france_test_sample_matches": 1496,
+    "accuracy_statement": "Test ground truth is unavailable; test set accuracy cannot be computed and is not fabricated."
+  },
+  "validation_metrics": {
+    "metric": "Entity-Level Macro F0.5",
+    "validation_macro_f05": 0.9572,
+    "validation_macro_precision": 0.9918,
+    "validation_macro_recall": 0.924,
+    "cv_3fold_macro_f05": "0.9601 +/- 0.0048",
+    "blocking_recall": 96.8973
+  },
+  "timing_and_resource_benchmark": {
+    "preprocessing_seconds": 17.37,
+    "blocking_seconds": 28.6,
+    "feature_generation_seconds": 48.2,
+    "model_inference_seconds": 14.1,
+    "submission_writing_seconds": 2.3,
+    "total_runtime_seconds": 110.57,
+    "peak_memory_mb": 2250
+  },
+  "official_validator_status": "PASS",
+  "internal_consistency_status": "PASS"
+}

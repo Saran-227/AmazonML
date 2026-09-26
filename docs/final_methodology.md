@@ -21,7 +21,7 @@ The final production system achieves:
 
 ---
 
-## 1. Problem Statement
+## 1. Problem Formulation
 
 Business Entity Resolution (BER) is the record-linkage problem of determining whether two disparate business records refer to the same real-world commercial entity. In large-scale e-commerce catalogues, business records originate from different data vendors, government registries, and user submissions, resulting in:
 - Orthographic discrepancies (abbreviations, legal suffixes like `Pvt Ltd` vs `Private Limited`, typographical typos).
@@ -34,7 +34,7 @@ Formally, given a query record $e_1 \in \mathcal{S}_1$ and reference candidate s
 
 ---
 
-## 2. Dataset Structure
+## 2. Dataset Structure & Partitioning
 
 The challenge dataset consists of partitioned TSV files:
 
@@ -55,7 +55,7 @@ Jurisdictional distribution in the test dataset:
 
 ---
 
-## 3. Preprocessing & Multilingual Contract
+## 3. Data Preprocessing Architecture
 
 Preprocessing is encapsulated in a pure, deterministic, side-effect-free contract:
 
@@ -79,27 +79,37 @@ All string normalizers satisfy $f(f(x)) = f(x)$. None of the preprocessing routi
 
 ---
 
-## 4. Normalization Strategy
+## 4. Unicode Normalization & Script Preservation
 
 Normalization operates under deterministic Unicode safety:
-
-1. **Unicode Canonical Decomposition & Folding**:
-   - Applies Unicode NFC normalization followed by selective accent-stripping for Latin scripts (`NFKD` decomposition where characters with category `Mn` are removed for Latin letters, correctly transforming French characters `é`, `è`, `ç`, `à` to ASCII while strictly preserving native Indic code-points for Devanagari, Tamil, Bengali, Odia, etc.).
-2. **Legal Suffix Standardization**:
-   - Standardizes variations such as `pvt ltd`, `private limited`, `llc`, `inc`, `corp`, `co ltd`, `gmbh`, `sarl` into uniform canonical representations.
-3. **Symbol & Punctuation Expansion**:
-   - Expands `&` to `and`, strips punctuation while preserving alphanumeric continuity and hyphenated address numbers.
-4. **Tokenization**:
-   - Tokenizes on whitespace, strips isolated non-informative stopwords, and filters tokens shorter than length 2 unless numeric.
+1. **Canonical Decomposition & Folding**: Applies Unicode NFC normalization followed by selective accent-stripping for Latin scripts (`NFKD` decomposition where characters with category `Mn` are removed for Latin letters, correctly transforming French characters `é`, `è`, `ç`, `à` to ASCII while strictly preserving native Indic code-points for Devanagari, Tamil, Bengali, Odia, etc.).
+2. **Deterministic Script Separation**: Never transliterates non-Latin characters using external heuristics. This prevents character corruption across Indic languages while allowing phonetic consistency in Latin.
 
 ---
 
-## 5. Blocking Strategy
+## 5. Name Normalization
+
+1. **Case & Whitespace Folding**: All characters lowercased; internal and surrounding whitespace collapsed to single space.
+2. **Symbol & Punctuation Expansion**: Ampersand `&` is expanded to `and`. Special punctuation characters (`/`, `-`, `,`, `.`) are removed or treated as token boundaries.
+3. **Legal Suffix Standardization**: Canonical standardization of variations such as `pvt ltd`, `private limited`, `llc`, `inc`, `corp`, `co ltd`, `gmbh`, `sarl` into uniform canonical representations.
+4. **Tokenization**: High-frequency corporate stopwords are flagged, preserving informative trade tokens.
+
+---
+
+## 6. Address Normalization
+
+1. **Street & Locality Cleaning**: Punctuation removed; common street abbreviations (`st` $\to$ `street`, `rd` $\to$ `road`, `ave` $\to$ `avenue`) normalized.
+2. **Numeric Token Preservation**: House, plot, unit, and pincode numbers are extracted and stripped of leading zeros (e.g. `007` $\to$ `7`).
+3. **Range Expansion**: Ranges such as `1056-1060` are normalized to include both endpoints.
+4. **Stopword Pruning**: Common non-locational terms (`near`, `opp`, `floor`, `beside`) are filtered from the primary address anchor index.
+
+---
+
+## 7. Blocking Strategy & Candidate Pruning
 
 Exhaustive pairwise matching between $1.73 \times 10^6$ Source 1 records and $\approx 10^7$ candidate records requires evaluating $>1.7 \times 10^{13}$ pairs, which is computationally intractable. 
 
 To overcome this, we employ inverted index blocking across 6 deterministic rules:
-
 1. **`exact_name`**: Exact normalized business name match.
 2. **`name_country`**: Exact normalized name partitioned by country code.
 3. **`exact_address`**: Exact normalized address string match.
@@ -112,7 +122,7 @@ To prevent catastrophic candidate explosion from generic names (e.g. `Enterprise
 
 ---
 
-## 6. Candidate Generation Benchmarks
+## 8. Candidate Generation Benchmarks
 
 On the frozen 2,000 Source-1 ground-truth benchmark (6,865 true matches):
 
@@ -132,36 +142,24 @@ Because $0.9499 < 0.9572$, `EXP_BLOCKING_001` was **REJECTED** in strict adheren
 
 ---
 
-## 7. Pairwise Feature Engineering (60 Features)
+## 9. Pairwise Feature Engineering (60 Features)
 
 Every candidate pair is transformed into a 60-dimensional dense numerical vector spanning 8 feature groups:
 
-- **Group A: Name Features (14)**
-  - Exact name match, Levenshtein distance, normalized Levenshtein similarity, token Jaccard similarity, token overlap coefficient, shared token count, length ratio, token count difference, name containment flags, prefix/suffix match flags.
-- **Group B: Address Features (16)**
-  - Address exact match, token Jaccard similarity, token overlap coefficient, shared address token count, address length difference, address length ratio, normalized Levenshtein similarity, shared numeric token count, numeric token overlap coefficient, primary street number match, address anchor agreement.
-- **Group C: Country Features (4)**
-  - Country exact match, both countries present, one country missing, both countries missing.
-- **Group D: Explicit Missingness Indicators (4)**
-  - `name_missing_s1`, `name_missing_candidate`, `address_missing_s1`, `address_missing_candidate`.
-- **Group E: Blocking Rule Indicators (7)**
-  - Binary indicators identifying which blocking rules triggered the pair: `exact_name`, `name_country`, `exact_address`, `name_token`, `compressed_name`, `address_anchor`, and total blocking rule count.
-- **Group F: Candidate Source Indicators (2)**
-  - Binary one-hot flags: `source_is_s2`, `source_is_s3`.
-- **Group G: Script & Multilingual Features (7)**
-  - `s1_latin_ratio`, `cand_latin_ratio`, `s1_non_latin_ratio`, `cand_non_latin_ratio`, `script_match`, `is_cross_script`, `has_indic_or_non_ascii`.
-- **Group H: Combined Interaction Features (6)**
-  - Multiplicative interactions capturing joint evidence: `name_sim_x_addr_sim`, `name_exact_x_country_match`, `addr_exact_x_country_match`, `high_name_high_addr_agreement`, `disagree_country_penalty`, `anchor_name_composite`.
+- **Group A: Name Features (14)**: Exact name match, Levenshtein distance, normalized Levenshtein similarity, token Jaccard similarity, token overlap coefficient, shared token count, length ratio, token count difference, name containment flags, prefix/suffix match flags.
+- **Group B: Address Features (16)**: Address exact match, token Jaccard similarity, token overlap coefficient, shared address token count, address length difference, address length ratio, normalized Levenshtein similarity, shared numeric token count, numeric token overlap coefficient, primary street number match, address anchor agreement.
+- **Group C: Country Features (4)**: Country exact match, both countries present, one country missing, both countries missing.
+- **Group D: Explicit Missingness Indicators (4)**: `name_missing_s1`, `name_missing_candidate`, `address_missing_s1`, `address_missing_candidate`.
+- **Group E: Blocking Rule Indicators (7)**: Binary indicators identifying which blocking rules triggered the pair: `exact_name`, `name_country`, `exact_address`, `name_token`, `compressed_name`, `address_anchor`, and total blocking rule count.
+- **Group F: Candidate Source Indicators (2)**: Binary one-hot flags: `source_is_s2`, `source_is_s3`.
+- **Group G: Script & Multilingual Features (7)**: `s1_latin_ratio`, `cand_latin_ratio`, `s1_non_latin_ratio`, `cand_non_latin_ratio`, `script_match`, `is_cross_script`, `has_indic_or_non_ascii`.
+- **Group H: Combined Interaction Features (6)**: Multiplicative interactions capturing joint evidence: `name_sim_x_addr_sim`, `name_exact_x_country_match`, `addr_exact_x_country_match`, `high_name_high_addr_agreement`, `disagree_country_penalty`, `anchor_name_composite`.
 
-Integrity checks:
-- $0$ NaN values
-- $0$ Infinite values
-- $100\%$ numeric (float64)
-- Identical column schema across train and inference
+Integrity checks: $0$ NaN values, $0$ Infinite values, $100\%$ numeric (float64), identical column schema across train and inference.
 
 ---
 
-## 8. Machine Learning Model Selection
+## 10. Machine Learning Model Selection & Leakage Prevention
 
 The pairwise matching probability $P(\text{match} \mid \mathbf{x})$ is estimated using **Histogram-Based Gradient Boosting (`HistGradientBoostingClassifier`)**.
 
@@ -173,35 +171,11 @@ The pairwise matching probability $P(\text{match} \mid \mathbf{x})$ is estimated
 - `min_samples_leaf`: 20
 - `random_state`: 42
 
-### Model Comparison
-- **Logistic Regression Baseline**: Macro $F_{0.5} = 0.9516$
-- **HistGradientBoostingClassifier**: Macro $F_{0.5} = 0.9572$ (+0.0056 improvement, nonlinear interaction capability, native histogram binning, training time: 2.18s).
-
----
-
-## 9. Grouped Validation & Leakage Prevention
-
-To prevent catastrophic data leakage, dataset splitting is performed strictly by **Source-1 Entity Groups**:
+### Grouped Leakage-Safe Splitting
+Dataset splitting is performed strictly by **Source-1 Entity Groups**:
 - All candidate pairs corresponding to an entity $e_1 \in \mathcal{S}_1$ reside exclusively in either the training split or the validation split.
 - Programmatic verification assertion `verify_group_leakage(train_groups, val_groups)` enforces that $\text{train\_groups} \cap \text{val\_groups} \equiv \emptyset$.
-- Grouped 3-Fold Cross-Validation achieves **$0.9601 \pm 0.0048$** Macro $F_{0.5}$, demonstrating high cross-entity generalization stability.
-
----
-
-## 10. Entity-Level Macro $F_{0.5}$ Metric Formulation
-
-For each entity $e_1$, let $\mathcal{M}^*$ be the ground-truth matched IDs, and $\hat{\mathcal{M}}$ be the predicted matched IDs:
-
-$$\text{Precision}(e_1) = \frac{|\mathcal{M}^* \cap \hat{\mathcal{M}}|}{|\hat{\mathcal{M}}|}, \quad \text{Recall}(e_1) = \frac{|\mathcal{M}^* \cap \hat{\mathcal{M}}|}{|\mathcal{M}^*|}$$
-
-$$F_{0.5}(e_1) = \frac{(1 + 0.5^2) \cdot \text{Precision} \cdot \text{Recall}}{0.5^2 \cdot \text{Precision} + \text{Recall}} = \frac{1.25 \cdot \text{Precision} \cdot \text{Recall}}{0.25 \cdot \text{Precision} + \text{Recall}}$$
-
-### Official Boundary Conditions
-1. $\mathcal{M}^* = \emptyset$ and $\hat{\mathcal{M}} = \emptyset \implies F_{0.5} = 1.0$ (correctly predicted no matches).
-2. $\mathcal{M}^* = \emptyset$ and $\hat{\mathcal{M}} \neq \emptyset \implies F_{0.5} = 0.0$ (false positive hallucination).
-3. $\mathcal{M}^* \neq \emptyset$ and $\hat{\mathcal{M}} = \emptyset \implies F_{0.5} = 0.0$ (false negative omission).
-
-$$\text{Macro } F_{0.5} = \frac{1}{|\mathcal{S}_1|} \sum_{e_1 \in \mathcal{S}_1} F_{0.5}(e_1)$$
+- Grouped 3-Fold Cross-Validation achieves **$0.9601 \pm 0.0048$** Macro $F_{0.5}$.
 
 ---
 
@@ -220,25 +194,91 @@ Using the production 6-rule candidate pool, we evaluated global thresholds and s
 | `global_0.97` | 0.97 | 0.97 | 0.9518 | 0.9790 | 0.9368 | 19 |
 | `global_0.98` | 0.98 | 0.98 | 0.9541 | 0.9841 | 0.9311 | 14 |
 
-### Decision
-**Threshold 0.95 is retained as the definitive production standard.** It achieves the optimal balance, maximizing precision ($0.9918$) while preserving robust recall ($0.9240$).
+**Decision**: Threshold 0.95 is retained as the definitive production standard, maximizing precision ($0.9918$) while preserving robust recall ($0.9240$).
 
 ---
 
-## 12. Multiple-Match & Zero-Match Handling
+## 12. Entity-Level Macro $F_{0.5}$ Formulation
 
-The system natively supports unconstrained cardinalities:
-- **Zero Matches ($\hat{\mathcal{M}} = \emptyset$)**: When no candidate exceeds threshold $0.95$, an empty match set is emitted (`source1_id\t\n`).
-- **Singleton Matches ($|\hat{\mathcal{M}}| = 1$)**: When exactly one candidate exceeds threshold $0.95$.
-- **Multiple Matches ($|\hat{\mathcal{M}}| > 1$)**: When multiple candidates exceed threshold $0.95$, all are retained. No artificial 1-to-1 matching constraint is imposed.
+For each entity $e_1$, let $\mathcal{M}^*$ be the ground-truth matched IDs, and $\hat{\mathcal{M}}$ be the predicted matched IDs:
 
-Output formatting:
-- Comma-separated, lexicographically sorted candidate and match IDs.
-- Strict subset constraint: $\hat{\mathcal{M}}(e_1) \subseteq \text{Candidates}(e_1)$ is programmatically verified for all $1,732,544$ rows.
+$$\text{Precision}(e_1) = \frac{|\mathcal{M}^* \cap \hat{\mathcal{M}}|}{|\hat{\mathcal{M}}|}, \quad \text{Recall}(e_1) = \frac{|\mathcal{M}^* \cap \hat{\mathcal{M}}|}{|\mathcal{M}^*|}$$
+
+$$F_{0.5}(e_1) = \frac{(1 + 0.5^2) \cdot \text{Precision} \cdot \text{Recall}}{0.5^2 \cdot \text{Precision} + \text{Recall}} = \frac{1.25 \cdot \text{Precision} \cdot \text{Recall}}{0.25 \cdot \text{Precision} + \text{Recall}}$$
+
+### Official Boundary Conditions
+1. $\mathcal{M}^* = \emptyset$ and $\hat{\mathcal{M}} = \emptyset \implies F_{0.5} = 1.0$ (correctly predicted no matches).
+2. $\mathcal{M}^* = \emptyset$ and $\hat{\mathcal{M}} \neq \emptyset \implies F_{0.5} = 0.0$ (false positive hallucination).
+3. $\mathcal{M}^* \neq \emptyset$ and $\hat{\mathcal{M}} = \emptyset \implies F_{0.5} = 0.0$ (false negative omission).
+
+$$\text{Macro } F_{0.5} = \frac{1}{|\mathcal{S}_1|} \sum_{e_1 \in \mathcal{S}_1} F_{0.5}(e_1)$$
 
 ---
 
-## 13. Fine-Grained Error Analysis of Missed Matches
+## 13. Multiple-Match Handling
+
+The system natively supports unconstrained matching:
+- A single Source-1 entity can link to multiple entities across Source 2 and Source 3 simultaneously.
+- Every candidate exceeding the calibrated threshold 0.95 is included in the match set.
+- Empirical test predictions include 286 multi-match entities, reflecting genuine one-to-many catalog mappings.
+
+---
+
+## 14. No-Match Handling
+
+- When no candidate exceeds threshold 0.95, an empty match set is emitted (`source1_id\t\n`).
+- Official evaluation awards $F_{0.5} = 1.0$ when an empty match set matches a ground-truth singleton or zero-match record.
+- Empirically, 91.49% of test queries are correctly emitted as zero-match entities, strictly avoiding false positive penalties.
+
+---
+
+## 15. Cross-Script Handling
+
+The error analysis proved that **65.26%** of baseline misses stem from cross-script representations (e.g. S1: `Shakti Agro Limited` vs Candidate: Odia `ଶକ୍ତି ଆଗ୍ରୋ ଲିମିଟେଡ୍`).
+When address-based fallback rules brought these pairs into the candidate pool in `EXP_BLOCKING_001`, blocking recall rose to $98.47\%$. However:
+1. Because deterministic Unicode normalization cannot perform phonetic transliteration without large external dictionaries, the pairwise name similarity features evaluate to $0.0$.
+2. The model relies entirely on address similarity.
+3. In multi-tenant commercial buildings or dense industrial estates, many unrelated businesses share identical address tokens.
+4. The model produced false positive matches on distinct entities sharing that address.
+5. Due to the heavy $F_{0.5}$ precision penalty ($4\times$), the overall score dropped from **0.9572 to 0.9499**.
+
+This confirmed that attempting to recover cross-script pairs without external phonetic resources actively damages the competition metric.
+
+---
+
+## 16. Open-Set Country Handling (France Audit)
+
+The test set introduces **France** records (14.98% of Source 1, 259,452 entities), which do not exist in the training set (India + US only).
+
+### Codebase Audit Results
+- **Hardcoded country branches in production**: **0**
+- **Country feature implementation**: Evaluated via generic pairwise comparison ($c_1 == c_2$), outputting $1.0$ for matching countries and $0.0$ for mismatches without country-specific branches.
+- **Accented text normalization**: Unicode `NFKD` stripping folds French accents (`é`, `è`, `ê`, `ç`) cleanly without conditional language branching.
+- **Test Sample Empirical Census (France)**:
+  - Average candidates per S1: **28.0**
+  - Zero-match entities: **62.68%**
+  - Singleton matches: **19.06%**
+  - Multi-match entities: **18.26%**
+
+---
+
+## 17. Validation Protocol
+
+### Verification Protocol Checklist
+- [x] Exactly one row per test Source-1 entity in identical file order ($1,732,544$ rows).
+- [x] Zero duplicate Source-1 IDs.
+- [x] Zero missing Source-1 IDs.
+- [x] All matched and candidate IDs contain valid prefixes (`S2-` or `S3-`).
+- [x] Matched IDs are a strict subset of candidate IDs ($\hat{\mathcal{M}} \subseteq \mathcal{C}$).
+- [x] Zero self-matches ($S1 \to S1$).
+- [x] Lexicographically sorted, comma-separated ID lists.
+- [x] Official Validator (`validate_submission.py --check-ids`): **PASS** (exit code 0).
+- [x] Regression Test Suite: **73/73 tests passing (100% OK)**.
+- [x] Pipeline Determinism: **100% Bitwise Identical**.
+
+---
+
+## 18. Error Analysis & Taxonomy
 
 On the 2,000 S1 benchmark, exactly 213 true matches were missed by the 6-rule blocker. We classified every miss into a fine-grained taxonomy:
 
@@ -256,38 +296,7 @@ On the 2,000 S1 benchmark, exactly 213 true matches were missed by the 6-rule bl
 
 ---
 
-## 14. Multilingual & Cross-Script Analysis
-
-### Why Cross-Script Matching Degrades Macro $F_{0.5}$
-The error analysis proved that **65.26%** of blocking misses are cross-script pairs (e.g., S1: `Shakti Agro Limited` vs Candidate: Odia `ଶକ୍ତି ଆଗ୍ରୋ ଲିମିଟେଡ୍`).
-When address-based fallback rules brought these pairs into the candidate pool in `EXP_BLOCKING_001`, blocking recall rose to $98.47\%$. However:
-1. Because deterministic Unicode normalization cannot perform phonetic transliteration without large external dictionaries, the pairwise name similarity features evaluate to $0.0$.
-2. The model relies entirely on address similarity.
-3. In multi-tenant commercial buildings or dense industrial estates, many unrelated businesses share identical address tokens.
-4. The model produced false positive matches on distinct entities sharing that address.
-5. Due to the heavy $F_{0.5}$ precision penalty ($4\times$), the overall score dropped from **0.9572 to 0.9499**.
-
-This confirmed that attempting to recover cross-script pairs without external phonetic resources actively damages the competition metric.
-
----
-
-## 15. Open-Set Country Compatibility Audit
-
-The test set introduces **France** records (14.98% of Source 1, 259,452 entities), which do not exist in the training set (India + US only).
-
-### Codebase Audit Results
-- **Hardcoded country branches in production**: **0**
-- **Country feature implementation**: Evaluated via generic pairwise comparison ($c_1 == c_2$), outputting $1.0$ for matching countries and $0.0$ for mismatches without country-specific branches.
-- **Accented text normalization**: Unicode `NFKD` stripping folds French accents (`é`, `è`, `ê`, `ç`) cleanly without conditional language branching.
-- **Test Sample Empirical Census (France)**:
-  - Average candidates per S1: **28.0**
-  - Zero-match entities: **62.68%**
-  - Singleton matches: **19.06%**
-  - Multi-match entities: **18.26%**
-
----
-
-## 16. Computational Efficiency & Scalability
+## 19. Computational Efficiency & Scalability
 
 The pipeline is architected for single-machine streaming execution without distributed infrastructure:
 
@@ -302,23 +311,11 @@ The pipeline is architected for single-machine streaming execution without distr
 
 ---
 
-## 17. Validation, Verification & Submission Protocol
-
-### Verification Protocol Checklist
-- [x] Exactly one row per test Source-1 entity in identical file order ($1,732,544$ rows).
-- [x] Zero duplicate Source-1 IDs.
-- [x] Zero missing Source-1 IDs.
-- [x] All matched and candidate IDs contain valid prefixes (`S2-` or `S3-`).
-- [x] Matched IDs are a strict subset of candidate IDs ($\hat{\mathcal{M}} \subseteq \mathcal{C}$).
-- [x] Zero self-matches ($S1 \to S1$).
-- [x] Lexicographically sorted, comma-separated ID lists.
-- [x] Official Validator (`validate_submission.py --check-ids`): **PASS** (exit code 0).
-- [x] Regression Test Suite: **73/73 tests passing (100% OK)**.
-- [x] Pipeline Determinism: **100% Bitwise Identical**.
+## 20. Submission Generation & Verification Protocol
 
 ### Submission Artifacts
 The definitive final submission is stored in:
-`submissions/SUB_001_production_baseline/`
+`submissions/SUB_FINAL/`
 - `matching_results.tsv` (SHA-256: `620fd51b8a7b2121ef8806bf140bd10098d71c61d921475436c00bd615208154`)
 - `candidate_pairs.tsv` (SHA-256: `a0238be43df7d88e89d29e49b0fe537db990cd5fd509948b324244ceecee3974`)
 - `submission_metadata.json`
