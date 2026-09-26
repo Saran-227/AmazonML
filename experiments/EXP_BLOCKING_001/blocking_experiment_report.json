@@ -1,0 +1,78 @@
+{
+  "experiment_id": "EXP_BLOCKING_001",
+  "date": "2026-09-26",
+  "description": "Cross-script address pair fallback + domain sub-token splitting",
+  "sample_size_s1": 2000,
+  "baseline_recall": 96.8973,
+  "new_recall": 98.4705,
+  "recall_improvement_pct": 1.5732,
+  "baseline_captured_matches": 6652,
+  "new_captured_matches": 6760,
+  "recovered_true_matches": 108,
+  "baseline_candidate_pairs": 384697,
+  "new_candidate_pairs": 410011,
+  "added_candidates": 25314,
+  "candidates_per_s1": {
+    "mean": 205.01,
+    "median": 186.0,
+    "p90": 437.0,
+    "p95": 513.05,
+    "p99": 727.04,
+    "max": 1148
+  },
+  "source2_recall": 97.9268,
+  "source3_recall": 98.9679,
+  "runtime_seconds": 20.57,
+  "rule_contributions": [
+    {
+      "rule_name": "name_token",
+      "total_candidates_generated": 369864,
+      "true_matches_captured": 5793,
+      "unique_true_matches_captured": 211,
+      "capture_percentage": 84.38
+    },
+    {
+      "rule_name": "address_anchor",
+      "total_candidates_generated": 18947,
+      "true_matches_captured": 5003,
+      "unique_true_matches_captured": 114,
+      "capture_percentage": 72.88
+    },
+    {
+      "rule_name": "cross_script_address",
+      "total_candidates_generated": 30643,
+      "true_matches_captured": 4554,
+      "unique_true_matches_captured": 108,
+      "capture_percentage": 66.34
+    },
+    {
+      "rule_name": "compressed_name",
+      "total_candidates_generated": 14673,
+      "true_matches_captured": 4424,
+      "unique_true_matches_captured": 19,
+      "capture_percentage": 64.44
+    },
+    {
+      "rule_name": "exact_name",
+      "total_candidates_generated": 1847,
+      "true_matches_captured": 1699,
+      "unique_true_matches_captured": 0,
+      "capture_percentage": 24.75
+    },
+    {
+      "rule_name": "name_country",
+      "total_candidates_generated": 1847,
+      "true_matches_captured": 1699,
+      "unique_true_matches_captured": 0,
+      "capture_percentage": 24.75
+    },
+    {
+      "rule_name": "exact_address",
+      "total_candidates_generated": 598,
+      "true_matches_captured": 595,
+      "unique_true_matches_captured": 0,
+      "capture_percentage": 8.67
+    }
+  ],
+  "decision": "EVALUATE_F05"
+}
