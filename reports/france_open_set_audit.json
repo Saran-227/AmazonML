@@ -1,0 +1,207 @@
+{
+  "experiment_id": "EXP_FRANCE_AUDIT_001",
+  "date": "2026-09-26",
+  "stage": "open_set_france_compatibility_audit",
+  "status": "COMPATIBLE_VERIFIED",
+  "code_inspection": {
+    "production_hardcoded_branch_count": 0,
+    "total_comment_and_docstring_occurrences": 12,
+    "occurrences": [
+      {
+        "file": "src/blocking/blocking_keys.py",
+        "line_number": 15,
+        "term": "US",
+        "line_content": "# English / US / International"
+      },
+      {
+        "file": "src/blocking/blocking_keys.py",
+        "line_number": 20,
+        "term": "India",
+        "line_content": "# India"
+      },
+      {
+        "file": "src/blocking/blocking_keys.py",
+        "line_number": 22,
+        "term": "France",
+        "line_content": "# France / Europe"
+      },
+      {
+        "file": "src/features/country_features.py",
+        "line_number": 5,
+        "term": "US",
+        "line_content": "any country labels (e.g. US, India, France)."
+      },
+      {
+        "file": "src/features/country_features.py",
+        "line_number": 5,
+        "term": "India",
+        "line_content": "any country labels (e.g. US, India, France)."
+      },
+      {
+        "file": "src/features/country_features.py",
+        "line_number": 5,
+        "term": "France",
+        "line_content": "any country labels (e.g. US, India, France)."
+      },
+      {
+        "file": "src/models/train_production_model.py",
+        "line_number": 5,
+        "term": "US",
+        "line_content": "spanning both US and India jurisdictions:"
+      },
+      {
+        "file": "src/models/train_production_model.py",
+        "line_number": 5,
+        "term": "India",
+        "line_content": "spanning both US and India jurisdictions:"
+      },
+      {
+        "file": "src/models/train_production_model.py",
+        "line_number": 77,
+        "term": "US",
+        "line_content": "# 2. Sample balanced S1 records across India and US"
+      },
+      {
+        "file": "src/models/train_production_model.py",
+        "line_number": 77,
+        "term": "India",
+        "line_content": "# 2. Sample balanced S1 records across India and US"
+      },
+      {
+        "file": "src/models/train_production_model.py",
+        "line_number": 78,
+        "term": "US",
+        "line_content": "logger.info(\"Sampling Source 1 records across India and US...\")"
+      },
+      {
+        "file": "src/models/train_production_model.py",
+        "line_number": 78,
+        "term": "India",
+        "line_content": "logger.info(\"Sampling Source 1 records across India and US...\")"
+      }
+    ],
+    "status": "PASS - Zero country-specific conditional branches in production logic"
+  },
+  "ground_truth_accuracy_disclaimer": "Test ground truth is unavailable. Accuracy metrics (Precision, Recall, F0.5) are strictly unmeasurable on the test set. All figures represent structural pipeline compatibility and empirical prediction distributions.",
+  "full_test_dataset_census": {
+    "test_source1": {
+      "India": {
+        "count": 809986,
+        "percentage": 46.75
+      },
+      "US": {
+        "count": 663106,
+        "percentage": 38.27
+      },
+      "France": {
+        "count": 259452,
+        "percentage": 14.98
+      }
+    },
+    "test_source2": {
+      "India": {
+        "count": 2312565,
+        "percentage": 47.32
+      },
+      "US": {
+        "count": 1871330,
+        "percentage": 38.29
+      },
+      "France": {
+        "count": 703378,
+        "percentage": 14.39
+      }
+    },
+    "test_source3": {
+      "India": {
+        "count": 2405000,
+        "percentage": 47.32
+      },
+      "US": {
+        "count": 1945701,
+        "percentage": 38.28
+      },
+      "France": {
+        "count": 731615,
+        "percentage": 14.4
+      }
+    }
+  },
+  "empirical_test_sample_diagnostics": {
+    "France": {
+      "entity_count": 1490,
+      "percentage_of_sample": 14.9,
+      "total_candidate_pairs": 41726,
+      "avg_candidates_per_entity": 28.0,
+      "median_candidates": 30.0,
+      "p90_candidates": 30.0,
+      "p95_candidates": 30.0,
+      "p99_candidates": 30.0,
+      "max_candidates": 30,
+      "empty_candidate_entities": 11,
+      "total_predicted_matches": 1496,
+      "avg_matches_per_entity": 1.004,
+      "zero_match_entities": 934,
+      "singleton_match_entities": 284,
+      "multimatch_entities": 272,
+      "zero_match_pct": 62.68,
+      "singleton_pct": 19.06,
+      "multimatch_pct": 18.26,
+      "s2_predicted_matches": 856,
+      "s3_predicted_matches": 640
+    },
+    "US": {
+      "entity_count": 3891,
+      "percentage_of_sample": 38.91,
+      "total_candidate_pairs": 92621,
+      "avg_candidates_per_entity": 23.8,
+      "median_candidates": 30.0,
+      "p90_candidates": 30.0,
+      "p95_candidates": 30.0,
+      "p99_candidates": 30.0,
+      "max_candidates": 30,
+      "empty_candidate_entities": 108,
+      "total_predicted_matches": 145,
+      "avg_matches_per_entity": 0.0373,
+      "zero_match_entities": 3753,
+      "singleton_match_entities": 131,
+      "multimatch_entities": 7,
+      "zero_match_pct": 96.45,
+      "singleton_pct": 3.37,
+      "multimatch_pct": 0.18,
+      "s2_predicted_matches": 80,
+      "s3_predicted_matches": 65
+    },
+    "India": {
+      "entity_count": 4619,
+      "percentage_of_sample": 46.19,
+      "total_candidate_pairs": 114055,
+      "avg_candidates_per_entity": 24.69,
+      "median_candidates": 30.0,
+      "p90_candidates": 30.0,
+      "p95_candidates": 30.0,
+      "p99_candidates": 30.0,
+      "max_candidates": 30,
+      "empty_candidate_entities": 137,
+      "total_predicted_matches": 166,
+      "avg_matches_per_entity": 0.0359,
+      "zero_match_entities": 4462,
+      "singleton_match_entities": 150,
+      "multimatch_entities": 7,
+      "zero_match_pct": 96.6,
+      "singleton_pct": 3.25,
+      "multimatch_pct": 0.15,
+      "s2_predicted_matches": 87,
+      "s3_predicted_matches": 79
+    }
+  },
+  "compatibility_verifications": [
+    "Generic Normalization: clean_multilingual_text handles French accents (e.g., e, e, c) cleanly via Unicode NFC/accents folding without country conditionals.",
+    "Open-Set Blocking: blocking_keys extract (country, token) without constraining country to a fixed enum.",
+    "Country Feature Agnosticism: country_features.py uses pairwise string equality (c1 == c2), giving 1.0 for matching French pairs and 0.0 for mismatches without hardcoded labels.",
+    "Model Compatibility: HistGradientBoostingClassifier scores French candidate pairs using numerical text similarities without special-case branching.",
+    "Deterministic Multi-Match: Successfully generated 284 singleton matches and 272 multi-matches for French entities."
+  ],
+  "runtime_seconds": 0.31,
+  "memory": "~2.2 GB (Chunked TSV streaming)"
+}
