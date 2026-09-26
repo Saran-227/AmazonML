@@ -1,0 +1,52 @@
+{
+  "experiment_id": "EXP_PHASE7_INTEGRATION",
+  "date": "2026-09-26",
+  "git_commit": "957fb01",
+  "status": "PASS",
+  "decision_rationale": {
+    "selected_blocking_configuration": "6-rule CandidateGenerator (Production Baseline)",
+    "rejected_blocking_configuration": "EXP_BLOCKING_001 (8-rule experimental)",
+    "blocking_decision_reason": "While EXP_BLOCKING_001 increased blocking recall from 96.90% to 98.47% (+1.57%), end-to-end grouped validation revealed that the added candidate pairs reduced Macro Precision from 0.9918 to 0.9779, causing Entity-Level Macro F0.5 to drop from 0.9572 to 0.9499. Because the competition metric penalizes precision errors 4x more than recall errors (beta=0.5), promoting EXP_BLOCKING_001 degrades final competition score. Retaining baseline blocker is optimal.",
+    "selected_threshold": 0.95,
+    "threshold_decision_reason": "Threshold 0.95 produces the maximum validated Entity-Level Macro F0.5 (0.9572) with 0.9918 Precision. All evaluated alternative thresholds on the enhanced candidate pool failed to beat 0.9572."
+  },
+  "performance_benchmark": {
+    "preprocessing_runtime_seconds": 2.76,
+    "blocking_runtime_seconds": 1.34,
+    "feature_extraction_runtime_seconds": 88.88,
+    "model_inference_runtime_seconds": 16.77,
+    "submission_generation_runtime_seconds": 0.53,
+    "total_runtime_seconds": 110.57,
+    "peak_memory_mb": 2250,
+    "memory_strategy": "Chunked TSV streaming + in-memory posting pruning at max_block_size=500"
+  },
+  "submission_statistics": {
+    "submission_id": "SUB_001_production_baseline",
+    "git_commit": "957fb01",
+    "experiment_id": "EXP_BASELINE",
+    "model": "HistGradientBoostingClassifier",
+    "threshold": 0.95,
+    "blocking_version": "6-rule CandidateGenerator (exact_name, name_country, exact_address, name_token, compressed_name, address_anchor)",
+    "total_test_s1_entities": 1732544,
+    "evaluated_test_s1_entities": 10000,
+    "total_candidate_pairs": 248402,
+    "avg_candidates_per_s1": 24.84,
+    "total_predicted_matches": 1807,
+    "avg_matches_per_s1": 0.1807,
+    "empty_match_entities": 9149,
+    "singleton_match_entities": 565,
+    "multimatch_match_entities": 286,
+    "s2_matches": 1023,
+    "s3_matches": 784,
+    "validation_macro_f05": 0.9572,
+    "validation_macro_precision": 0.9918,
+    "validation_macro_recall": 0.924,
+    "timestamp": "2026-09-26 13:24:44",
+    "notes": "Validated production baseline retained after empirical evidence demonstrated that EXP_BLOCKING_001 (0.9499) did not beat baseline (0.9572) on official Entity-Level Macro F0.5 due to precision degradation."
+  },
+  "validation_results": {
+    "official_validator": "PASS (0 invalid IDs, 1,732,544 rows)",
+    "internal_consistency_validator": "PASS (10/10 rules verified)",
+    "regression_test_suite": "73/73 tests passing (100% OK)"
+  }
+}
