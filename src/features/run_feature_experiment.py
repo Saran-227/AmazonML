@@ -56,7 +56,9 @@ def run_feature_experiment(
     t_start = time.time()
     logger.info("Starting Phase 3 feature engineering experiment (S1 sample=%d)...", sample_size)
 
-    dataset_dir = REPO_ROOT / "student_resource" / "dataset" / "train"
+    dataset_dir = REPO_ROOT / "data" / "train"
+    if not dataset_dir.exists():
+        dataset_dir = REPO_ROOT / "student_resource" / "dataset" / "train"
     gt_file = dataset_dir / "train_ground_truth.tsv"
     s1_file = dataset_dir / "train_source1.tsv"
     s2_file = dataset_dir / "train_source2.tsv"

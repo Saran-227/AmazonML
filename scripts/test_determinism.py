@@ -93,7 +93,7 @@ def run_pipeline_deterministic(
 
 
 def main():
-    test_dir = REPO_ROOT / "student_resource" / "dataset" / "test"
+    test_dir = REPO_ROOT / "data" / "test"
     det_dir = REPO_ROOT / "reports" / "determinism_audit"
     det_dir.mkdir(parents=True, exist_ok=True)
 
@@ -141,16 +141,22 @@ def main():
     logger.info("DETERMINISM AUDIT PASSED: 100% BITWISE IDENTICAL OUTPUTS.")
 
     # Save summary report
+    sub_dir = REPO_ROOT / "submissions" / "SUB_001_production_baseline"
+    full_m = sub_dir / "matching_results.tsv"
+    full_c = sub_dir / "candidate_pairs.tsv"
+
     report = {
         "status": "PASS",
+        "sample_size_s1": len(s1_records),
+        "candidate_pool_size": len(candidate_records),
         "matching_results_sha256_run1": hash_m1,
         "matching_results_sha256_run2": hash_m2,
         "matching_results_identical": (hash_m1 == hash_m2),
         "candidate_pairs_sha256_run1": hash_c1,
         "candidate_pairs_sha256_run2": hash_c2,
         "candidate_pairs_identical": (hash_c1 == hash_c2),
-        "full_submission_matching_sha256": compute_sha256(REPO_ROOT / "student_resource" / "output" / "matching_results.tsv"),
-        "full_submission_candidate_sha256": compute_sha256(REPO_ROOT / "student_resource" / "output" / "candidate_pairs.tsv"),
+        "full_submission_matching_sha256": compute_sha256(full_m) if full_m.exists() else None,
+        "full_submission_candidate_sha256": compute_sha256(full_c) if full_c.exists() else None,
     }
     with open(det_dir / "determinism_report.json", "w") as f:
         json.dump(report, f, indent=2)
@@ -158,3 +164,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

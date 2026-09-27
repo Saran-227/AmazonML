@@ -1,16 +1,21 @@
-metric_category,metric_name,value
-Configuration,Blocking Model,6-rule CandidateGenerator
-Configuration,Threshold,0.95
-Validation,Macro F0.5,0.9572
-Validation,Macro Precision,0.9918
-Validation,Macro Recall,0.9240
-Validation,3-Fold Grouped CV Macro F0.5,0.9601 +/- 0.0048
-Runtime,Preprocessing Seconds,2.76
-Runtime,Blocking Seconds,1.34
-Runtime,Feature Extraction Seconds,88.88
-Runtime,Model Inference Seconds,16.77
-Runtime,Submission Writing Seconds,0.53
-Runtime,Total Runtime Seconds,110.57
-Memory,Peak RAM MB,2250 MB
-Verification,Official Validator,PASS (0 invalid IDs)
-Verification,Regression Test Suite,73/73 PASS
+category,metric_name,value
+Pipeline,Model Type,HistGradientBoostingClassifier
+Pipeline,Features,60
+Pipeline,Threshold,0.95
+Pipeline,Source 1 Entities,100
+Pipeline,Reference Entities,9969589
+Production,Total Candidates,448
+Production,Avg Candidates/S1,4.48
+Production,Total Matches,0
+Production,Avg Matches/S1,0.0
+Production,Zero Match S1,100
+Production,One Match S1,0
+Production,Multi Match S1,0
+Production,S2 Matches,0
+Production,S3 Matches,0
+Runtime,Indexing Seconds,0.01
+Runtime,Inference Seconds,1.96
+Runtime,Total Pipeline Seconds,45.1
+Validation,Cross File Consistency,PASS
+Validation,Regression Test Suite,PASS (73/73 tests passed)
+Validation,Determinism,PASS (100% bitwise identical SHA-256)

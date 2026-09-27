@@ -1,11 +1,13 @@
 {
   "status": "PASS",
-  "matching_results_sha256_run1": "7552e4368d6e1216663df027f6ff44d216ee53275a2333ae32f3a13f7f585898",
-  "matching_results_sha256_run2": "7552e4368d6e1216663df027f6ff44d216ee53275a2333ae32f3a13f7f585898",
+  "sample_size_s1": 1000,
+  "candidate_pool_size": 10000,
+  "matching_results_sha256_run1": "27415352c880cc91a1165743c9bc5c7c73b6fc4483781124caf0131e53b379cf",
+  "matching_results_sha256_run2": "27415352c880cc91a1165743c9bc5c7c73b6fc4483781124caf0131e53b379cf",
   "matching_results_identical": true,
-  "candidate_pairs_sha256_run1": "ae27bb10ece80608647609e1600881c52e731570fcc15db107a955faaf2b4c40",
-  "candidate_pairs_sha256_run2": "ae27bb10ece80608647609e1600881c52e731570fcc15db107a955faaf2b4c40",
+  "candidate_pairs_sha256_run1": "e7dbe9717614005e9888788b59f256dab247570a47e738495c3612246ebd1d75",
+  "candidate_pairs_sha256_run2": "e7dbe9717614005e9888788b59f256dab247570a47e738495c3612246ebd1d75",
   "candidate_pairs_identical": true,
-  "full_submission_matching_sha256": "620fd51b8a7b2121ef8806bf140bd10098d71c61d921475436c00bd615208154",
-  "full_submission_candidate_sha256": "a0238be43df7d88e89d29e49b0fe537db990cd5fd509948b324244ceecee3974"
+  "full_submission_matching_sha256": "50f16b63afe9e36f674fe8d85824d21c5339b326bae17c78d6a74eb9c9e9f4a5",
+  "full_submission_candidate_sha256": "d36516fe4818842b1fe28e21d64cdb32508aea148b4a45071fb6c7d1c7720dd9"
 }

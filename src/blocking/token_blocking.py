@@ -69,7 +69,9 @@ class TokenBlocker:
                 with_country=True,
             )
             for k in token_keys:
-                self.name_token_index[k].append(item)
+                post = self.name_token_index[k]
+                if len(post) <= self.max_block_size:
+                    post.append(item)
 
         if self.enable_compressed_name:
             comp_keys = extract_compressed_name_keys(
@@ -79,7 +81,9 @@ class TokenBlocker:
                 with_country=True,
             )
             for k in comp_keys:
-                self.compressed_name_index[k].append(item)
+                post = self.compressed_name_index[k]
+                if len(post) <= self.max_block_size:
+                    post.append(item)
 
         if self.enable_address_anchor:
             anchor_keys = extract_address_anchor_keys(
@@ -89,7 +93,9 @@ class TokenBlocker:
                 max_words_per_number=3,
             )
             for k in anchor_keys:
-                self.address_anchor_index[k].append(item)
+                post = self.address_anchor_index[k]
+                if len(post) <= self.max_block_size:
+                    post.append(item)
 
     def get_candidates(self, query_record: Dict[str, Any]) -> Dict[str, Tuple[str, Set[str]]]:
         """

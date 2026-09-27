@@ -32,17 +32,24 @@ def levenshtein_distance(s1: str, s2: str) -> int:
     if len(s1) < len(s2):
         s1, s2 = s2, s1
 
-    prev = list(range(len(s2) + 1))
+    n2 = len(s2)
+    prev = list(range(n2 + 1))
+    curr = [0] * (n2 + 1)
     for i, c1 in enumerate(s1):
-        curr = [i + 1] * (len(s2) + 1)
-        for j, c2 in enumerate(s2):
-            insertions = prev[j + 1] + 1
-            deletions = curr[j] + 1
-            substitutions = prev[j] + (c1 != c2)
-            curr[j + 1] = min(insertions, deletions, substitutions)
-        prev = curr
+        curr[0] = i + 1
+        for j in range(n2):
+            ins = prev[j + 1] + 1
+            delete = curr[j] + 1
+            sub = prev[j] if c1 == s2[j] else prev[j] + 1
+            if ins <= delete and ins <= sub:
+                curr[j + 1] = ins
+            elif delete <= sub:
+                curr[j + 1] = delete
+            else:
+                curr[j + 1] = sub
+        prev, curr = curr, prev
 
-    return prev[-1]
+    return prev[n2]
 
 
 def normalized_levenshtein_similarity(s1: str, s2: str) -> float:

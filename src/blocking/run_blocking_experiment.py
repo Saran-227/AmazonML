@@ -53,7 +53,9 @@ def run_experiment(
     logger.info("Starting baseline blocking experiment with %d S1 entities...", sample_size)
 
     repo_root = Path(__file__).resolve().parent.parent.parent
-    dataset_dir = repo_root / "student_resource" / "dataset" / "train"
+    dataset_dir = repo_root / "data" / "train"
+    if not dataset_dir.exists():
+        dataset_dir = repo_root / "student_resource" / "dataset" / "train"
 
     gt_file = dataset_dir / "train_ground_truth.tsv"
     s1_file = dataset_dir / "train_source1.tsv"
