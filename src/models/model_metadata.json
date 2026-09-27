@@ -67,6 +67,6 @@
     "name_overlap_and_address_anchor"
   ],
   "default_threshold": 0.95,
-  "training_time_seconds": 6.53,
-  "total_pipeline_time_seconds": 389.24
+  "training_time_seconds": 3.212,
+  "total_pipeline_time_seconds": 296.8
 }

@@ -1,0 +1,144 @@
+{
+  "country": "US",
+  "total_s1": 663106,
+  "total_candidates": 17238824,
+  "total_matches": 2887124,
+  "s2_matches": 1427940,
+  "s3_matches": 1459184,
+  "empty_candidates": 176,
+  "empty_matches": 12627,
+  "singleton_matches": 38750,
+  "multimatch_matches": 611729,
+  "indexing_time_seconds": 135.57,
+  "inference_time_seconds": 5827.94,
+  "prob_brackets": {
+    ">=0.50": 3180855,
+    ">=0.70": 3079345,
+    ">=0.80": 3022566,
+    ">=0.90": 2951438,
+    ">=0.95": 2887124,
+    ">=0.99": 2742927
+  },
+  "high_confidence_audit_sample": [
+    {
+      "source1_entity_id": "S1-714132312",
+      "candidate_entity_id": "S2-786029403",
+      "candidate_source": "S2",
+      "probability": 0.9998
+    },
+    {
+      "source1_entity_id": "S1-714132312",
+      "candidate_entity_id": "S2-187020300",
+      "candidate_source": "S2",
+      "probability": 0.9996
+    },
+    {
+      "source1_entity_id": "S1-106407869",
+      "candidate_entity_id": "S2-705547832",
+      "candidate_source": "S2",
+      "probability": 0.9997
+    },
+    {
+      "source1_entity_id": "S1-909865979",
+      "candidate_entity_id": "S2-819591958",
+      "candidate_source": "S2",
+      "probability": 0.9986
+    },
+    {
+      "source1_entity_id": "S1-778640743",
+      "candidate_entity_id": "S2-484690984",
+      "candidate_source": "S2",
+      "probability": 0.9998
+    },
+    {
+      "source1_entity_id": "S1-778640743",
+      "candidate_entity_id": "S2-87750197",
+      "candidate_source": "S2",
+      "probability": 0.9998
+    },
+    {
+      "source1_entity_id": "S1-778640743",
+      "candidate_entity_id": "S2-933136796",
+      "candidate_source": "S2",
+      "probability": 0.9998
+    },
+    {
+      "source1_entity_id": "S1-778640743",
+      "candidate_entity_id": "S2-673208513",
+      "candidate_source": "S2",
+      "probability": 0.9997
+    },
+    {
+      "source1_entity_id": "S1-778640743",
+      "candidate_entity_id": "S2-944021337",
+      "candidate_source": "S2",
+      "probability": 0.9998
+    },
+    {
+      "source1_entity_id": "S1-684974736",
+      "candidate_entity_id": "S2-653794580",
+      "candidate_source": "S2",
+      "probability": 0.9998
+    },
+    {
+      "source1_entity_id": "S1-426194890",
+      "candidate_entity_id": "S2-12575838",
+      "candidate_source": "S2",
+      "probability": 0.9998
+    },
+    {
+      "source1_entity_id": "S1-426194890",
+      "candidate_entity_id": "S2-902791828",
+      "candidate_source": "S2",
+      "probability": 0.9998
+    },
+    {
+      "source1_entity_id": "S1-426194890",
+      "candidate_entity_id": "S2-206924199",
+      "candidate_source": "S2",
+      "probability": 0.9998
+    },
+    {
+      "source1_entity_id": "S1-426194890",
+      "candidate_entity_id": "S2-189578510",
+      "candidate_source": "S2",
+      "probability": 0.9998
+    },
+    {
+      "source1_entity_id": "S1-426194890",
+      "candidate_entity_id": "S2-246461203",
+      "candidate_source": "S2",
+      "probability": 0.9997
+    },
+    {
+      "source1_entity_id": "S1-122385784",
+      "candidate_entity_id": "S2-971113636",
+      "candidate_source": "S2",
+      "probability": 0.9998
+    },
+    {
+      "source1_entity_id": "S1-122385784",
+      "candidate_entity_id": "S2-396702445",
+      "candidate_source": "S2",
+      "probability": 0.9998
+    },
+    {
+      "source1_entity_id": "S1-540642140",
+      "candidate_entity_id": "S2-936954782",
+      "candidate_source": "S2",
+      "probability": 0.9997
+    },
+    {
+      "source1_entity_id": "S1-540642140",
+      "candidate_entity_id": "S2-497245561",
+      "candidate_source": "S2",
+      "probability": 0.9979
+    },
+    {
+      "source1_entity_id": "S1-261170522",
+      "candidate_entity_id": "S2-470996829",
+      "candidate_source": "S2",
+      "probability": 0.9998
+    }
+  ]
+}

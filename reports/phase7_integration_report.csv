@@ -2,20 +2,13 @@ category,metric_name,value
 Pipeline,Model Type,HistGradientBoostingClassifier
 Pipeline,Features,60
 Pipeline,Threshold,0.95
-Pipeline,Source 1 Entities,100
+Pipeline,Source 1 Entities,1732544
 Pipeline,Reference Entities,9969589
-Production,Total Candidates,448
-Production,Avg Candidates/S1,4.48
-Production,Total Matches,0
-Production,Avg Matches/S1,0.0
-Production,Zero Match S1,100
-Production,One Match S1,0
-Production,Multi Match S1,0
-Production,S2 Matches,0
-Production,S3 Matches,0
-Runtime,Indexing Seconds,0.01
-Runtime,Inference Seconds,1.96
-Runtime,Total Pipeline Seconds,45.1
-Validation,Cross File Consistency,PASS
+Production,Total Candidates,24753184
+Production,Avg Candidates/S1,14.29
+Production,Total Matches,4967084
+Production,Avg Matches/S1,2.8669
+Validation,Official Validator,PASS (safe to submit)
+Validation,Cross File Consistency,PASS (8/8 rules passed)
 Validation,Regression Test Suite,PASS (73/73 tests passed)
 Validation,Determinism,PASS (100% bitwise identical SHA-256)

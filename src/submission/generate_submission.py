@@ -64,6 +64,9 @@ def generate_submission(
     candidate_pool_limit_per_source: Optional[int] = None,
     country: Optional[str] = None,
     checkpoint_dir: Optional[Union[str, Path]] = None,
+    s1_slice_start: Optional[int] = None,
+    s1_slice_end: Optional[int] = None,
+    part_name: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Executes end-to-end test inference and generates submission TSV files.
@@ -281,18 +284,30 @@ def generate_submission(
     feat_names = list(model.feature_names_in_)
 
     for c_name in target_countries:
-        ckpt_tsv = ckpt_dir / f"checkpoint_{c_name}.tsv"
-        ckpt_meta = ckpt_dir / f"checkpoint_{c_name}_meta.json"
+        file_suffix = f"_{part_name}" if part_name else ""
+        ckpt_tsv = ckpt_dir / f"checkpoint_{c_name}{file_suffix}.tsv"
+        ckpt_meta = ckpt_dir / f"checkpoint_{c_name}{file_suffix}_meta.json"
 
         if ckpt_tsv.exists() and ckpt_meta.exists():
             logger.info("Checkpoint already exists for %s at %s. Skipping computation.", c_name, ckpt_tsv)
+            if part_name:
+                return {
+                    "status": "CHECKPOINT_SAVED",
+                    "country": c_name,
+                    "part_name": part_name,
+                    "checkpoint_file": str(ckpt_tsv),
+                }
             continue
 
-        logger.info("=" * 70)
-        logger.info("PROCESSING COUNTRY: %s (%d S1 entities)", c_name, len(s1_by_country.get(c_name, [])))
-        logger.info("=" * 70)
-
         country_s1_raw = s1_by_country.get(c_name, [])
+        if s1_slice_start is not None or s1_slice_end is not None:
+            start_i = s1_slice_start or 0
+            end_i = s1_slice_end if s1_slice_end is not None else len(country_s1_raw)
+            country_s1_raw = country_s1_raw[start_i:end_i]
+
+        logger.info("=" * 70)
+        logger.info("PROCESSING COUNTRY: %s%s (%d S1 entities)", c_name, f" [{part_name}]" if part_name else "", len(country_s1_raw))
+        logger.info("=" * 70)
         t0_s1_norm = time.time()
         logger.info("Pre-normalizing %d S1 entities for %s...", len(country_s1_raw), c_name)
         s1_norms = [
@@ -434,6 +449,19 @@ def generate_submission(
         if c_name in s1_by_country:
             del s1_by_country[c_name]
         gc.collect()
+
+        if part_name:
+            logger.info("Saved slice checkpoint for %s [%s]. Exiting slice worker.", c_name, part_name)
+            return {
+                "status": "CHECKPOINT_SAVED",
+                "country": c_name,
+                "part_name": part_name,
+                "checkpoint_file": str(ckpt_tsv),
+                "total_s1": len(country_s1_raw),
+                "total_candidates": c_total_cands,
+                "total_matches": c_total_matches,
+                "total_runtime_seconds": round(time.time() - t_start, 2),
+            }
 
     # Check if all 3 country checkpoints are available
     ready_countries = [c for c in all_known_countries if (ckpt_dir / f"checkpoint_{c}.tsv").exists() and (ckpt_dir / f"checkpoint_{c}_meta.json").exists()]
@@ -691,6 +719,9 @@ if __name__ == "__main__":
     parser.add_argument("--candidate-pool-limit", type=int, default=None)
     parser.add_argument("--country", type=str, default=None, help="Process specific country: France, US, India, or all")
     parser.add_argument("--checkpoint-dir", type=str, default=None, help="Directory to store country checkpoints")
+    parser.add_argument("--s1-slice-start", type=int, default=None, help="Start index for slicing country S1 queries")
+    parser.add_argument("--s1-slice-end", type=int, default=None, help="End index for slicing country S1 queries")
+    parser.add_argument("--part-name", type=str, default=None, help="Optional part suffix for parallel checkpoint files")
 
     args = parser.parse_args()
     res = generate_submission(
@@ -703,6 +734,9 @@ if __name__ == "__main__":
         candidate_pool_limit_per_source=args.candidate_pool_limit,
         country=args.country,
         checkpoint_dir=args.checkpoint_dir,
+        s1_slice_start=args.s1_slice_start,
+        s1_slice_end=args.s1_slice_end,
+        part_name=args.part_name,
     )
     print("\nSubmission Generation Complete:")
     print(json.dumps(res, indent=2))

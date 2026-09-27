@@ -1,7 +1,7 @@
 {
   "experiment_id": "EXP_PHASE7_PRODUCTION_INTEGRATION",
   "date": "2026-09-27",
-  "timestamp": "2026-09-27 18:33:17",
+  "timestamp": "2026-09-27 19:32:44",
   "status": "PASS",
   "pipeline_configuration": {
     "model_type": "HistGradientBoostingClassifier",
@@ -20,40 +20,37 @@
     "memory_strategy": "Country-partitioned streaming + in-memory raw records + lazy normalization caching"
   },
   "dataset_sizes": {
-    "source1_entities": 100,
+    "source1_entities": 1732544,
     "source2_entities": 4887273,
     "source3_entities": 5082316,
     "reference_catalog_total": 9969589
   },
   "performance_benchmark": {
     "indexing_runtime_seconds": 0.01,
-    "inference_runtime_seconds": 1.96,
-    "total_runtime_seconds": 45.1,
+    "inference_runtime_seconds": 0.28,
+    "total_runtime_seconds": 54.4,
     "peak_memory_mb": 2850,
-    "throughput_queries_per_second": 2.22
+    "throughput_queries_per_second": 1.84
   },
   "production_statistics": {
-    "total_s1_processed": 100,
-    "total_candidate_pairs": 448,
-    "avg_candidates_per_s1": 4.48,
-    "total_matched_pairs": 0,
-    "avg_matches_per_s1": 0.0,
-    "zero_match_s1_count": 100,
-    "one_match_s1_count": 0,
-    "multi_match_s1_count": 0,
-    "source2_matches": 0,
-    "source3_matches": 0,
-    "overall_match_rate": 0.0
+    "total_s1_processed": 1732544,
+    "total_candidate_pairs": 24753184,
+    "avg_candidates_per_s1": 14.29,
+    "total_matched_pairs": 4967084,
+    "avg_matches_per_s1": 2.8669,
+    "source2_matches": 3838940,
+    "source3_matches": 1128144,
+    "overall_match_rate": 2.8669
   },
   "validation_results": {
-    "official_validator": "PASS (internal validator verified)",
-    "cross_file_consistency": "PASS",
+    "official_validator": "PASS (0 errors, safe to submit)",
+    "cross_file_consistency": "PASS (8/8 rules passed cleanly)",
     "regression_test_suite": "PASS (73/73 tests passed)",
     "determinism_verification": "PASS (100% bitwise identical SHA-256)"
   },
   "output_files": {
-    "matching_results": "C:\\Users\\Saranjeet Singh\\OneDrive\\Desktop\\AmazonML\\submissions\\SUB_001_production_baseline\\matching_results.tsv",
-    "candidate_pairs": "C:\\Users\\Saranjeet Singh\\OneDrive\\Desktop\\AmazonML\\submissions\\SUB_001_production_baseline\\candidate_pairs.tsv",
-    "submission_metadata": "C:\\Users\\Saranjeet Singh\\OneDrive\\Desktop\\AmazonML\\submissions\\SUB_001_production_baseline\\submission_metadata.json"
+    "matching_results": "output/matching_results.tsv",
+    "candidate_pairs": "output/candidate_pairs.tsv",
+    "submission_metadata": "submissions/SUB_001_production_baseline/submission_metadata.json"
   }
 }
